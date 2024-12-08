@@ -1,7 +1,5 @@
-
 <%
 	session.invalidate();
-	session.getAttribute("user"); //this will throw an error
+	//session.getAttribute("user"); //this will throw an error
 	response.sendRedirect("login.jsp");
 %>
-

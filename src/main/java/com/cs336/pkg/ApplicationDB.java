@@ -2,7 +2,10 @@ package com.cs336.pkg;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import com.mysql.jdbc.Statement;
 
 public class ApplicationDB {
 	
@@ -12,8 +15,13 @@ public class ApplicationDB {
 
 	public Connection getConnection(){
 		
+		
 		//Create a connection string
-		String connectionUrl = "jdbc:mysql://localhost:3306/BarBeerDrinkerSample";
+		//String connectionURL = "jdbc:mysql://jasminejustin7:BlackLagoon2006!@localhost:3306/logininfo";
+		String connectionURL = "jdbc:mysql://localhost:3306/logininfo?useSSL=false&allowPublicKeyRetrieval=true";
+		String myUsername = "jasminejustin7";
+		String myPassword = "BlackLagoon2006!";
+		//String connectionUrl = "jdbc:mysql://localhost:3306/logininfoproject2";
 		Connection connection = null;
 		
 		try {
@@ -31,7 +39,16 @@ public class ApplicationDB {
 		}
 		try {
 			//Create a connection to your DB
-			connection = DriverManager.getConnection(connectionUrl,"root", "root");
+			connection = DriverManager.getConnection(connectionURL, myUsername, myPassword);
+			//connection = DriverManager.getConnection(connectionUrl,"root", "root");
+			Statement stmt = (Statement) connection.createStatement();
+			String sql = "SELECT * FROM users";
+			ResultSet rs = stmt.executeQuery(sql);
+			while(rs.next()) {
+				String username = rs.getString("username");
+				String password = rs.getString("password");
+			}
+		
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -49,10 +66,6 @@ public class ApplicationDB {
 			e.printStackTrace();
 		}
 	}
-	
-	
-	
-	
 	
 	public static void main(String[] args) {
 		ApplicationDB dao = new ApplicationDB();

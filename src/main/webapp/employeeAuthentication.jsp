@@ -5,7 +5,7 @@
 	Class.forName("com.mysql.jdbc.Driver");
 	String myUsernmae = "jasminejustin7";
 	String myPassword = "BlackLagoon2006!";
-	Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/logininfo", myUsernmae,
+	Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/railway_booking", myUsernmae,
 	myPassword);
 	Statement st = con.createStatement();
 	ResultSet rs;
@@ -17,8 +17,6 @@
 		out.println("<a href='logout.jsp'>Log out</a>");
 		response.sendRedirect("success.jsp");
 	} else {
-		out.println("Invalid password <a href='login.jsp'>try again</a>");
+		out.println("Invalid password <a href='generalLoginPage.jsp'>try again</a>");
 	}
 %>
-
-
