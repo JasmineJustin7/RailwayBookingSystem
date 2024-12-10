@@ -11,6 +11,10 @@
 	Password:<input type="password" name="password"/> <br/>
 	<input type="submit" value="Submit"/>
 	</form>
+	    <!--Customer Registration -->
+    <form action="registerNewCustomer.jsp" method="get">
+        <button type="submit">Register new customer</button>
+    </form>
     <a href="generalLoginPage.jsp">Go back to the main page</a>
 </body>
 </html>
