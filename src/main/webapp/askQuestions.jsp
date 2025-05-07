@@ -38,5 +38,4 @@ String questionText = request.getParameter("question_text");
 <form method="post" action="askQuestions.jsp">
     Question: <textarea name="question_text"></textarea><br/>
     <input type="submit" value="Submit" />
-    <a href="customerAuthentication.jsp">Go back to the Customer home page</a>
 </form>

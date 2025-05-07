@@ -7,23 +7,23 @@
     String train_name = request.getParameter("tl_name");
     String age = request.getParameter("age");
     String status = request.getParameter("status"); //disability status
-    Double total_fare;
+    Double total_fare = null;
     String c_id = null;  // Initialize c_id to null
-    int origin_station;
-    int dest_station;
-    
+    int origin_station = -1;
+    int dest_station = -1;
+
     // Validate the input fields
     if (trip_type == null || trip_type.trim().isEmpty() ||
         date == null || date.trim().isEmpty() ||
         train_name == null || train_name.trim().isEmpty() ||
         email == null || email.trim().isEmpty() || age == null || 
-        age.trim().isEmpty() || status == null || status.trim().isEmpty() ) {
+        age.trim().isEmpty() || status == null || status.trim().isEmpty()) {
         
         response.getWriter().println("All fields are required.");
         out.println("Invalid reservation <a href='customerReservations.jsp'>try again</a>");
         return;
     }
-    
+
     Class.forName("com.mysql.jdbc.Driver");
     String myUsername = "jasminejustin7";
     String myPassword = "BlackLagoon2006!";
@@ -32,11 +32,15 @@
     // SQL query to get the c_id using email
     String getCustomerSQL = "SELECT c_id FROM customers WHERE email = ?";
 
+    // SQL query to get the train schedule details from the train_schedule table
+    String getTrainScheduleSQL = "SELECT origin_station, dest_station, fare FROM train_schedule WHERE tl_name = ?";
+
     // SQL query to insert reservation data
     String sql = "INSERT INTO reservations (c_id, os_id, ds_id, total_fare, r_date, r_type) VALUES (?, ?, ?, ?, ?, ?)";
 
     try (Connection con = DriverManager.getConnection(jdbcURL, myUsername, myPassword);
-         PreparedStatement getCustomerStmt = con.prepareStatement(getCustomerSQL)) {
+         PreparedStatement getCustomerStmt = con.prepareStatement(getCustomerSQL);
+         PreparedStatement getTrainScheduleStmt = con.prepareStatement(getTrainScheduleSQL)) {
 
         // Query the database to get c_id based on the email
         getCustomerStmt.setString(1, email);
@@ -50,50 +54,47 @@
             return;
         }
 
-        // Determine the total fare and stations based on the train name
-        if (train_name.equalsIgnoreCase("L")) {
-            total_fare = 15.00;
-            origin_station = 1;
-            dest_station = 10;
-        } else if (train_name.equalsIgnoreCase("B")) {
-            total_fare = 12.00;
-            origin_station = 1;
-            dest_station = 10;
-        } else if (train_name.equalsIgnoreCase("E")) {
-            total_fare = 9.00;
-            origin_station = 3;
-            dest_station = 10;
-        } else {
+        // Query the database to get the train schedule details (origin_station, dest_station, fare)
+        getTrainScheduleStmt.setString(1, train_name);
+        ResultSet trainRs = getTrainScheduleStmt.executeQuery();
+
+        // If the train line is not found
+        if (!trainRs.next()) {
             out.println("Train Line is not available at this time.");
             return;
         }
+
+        // Retrieve the train schedule details
+        origin_station = trainRs.getInt("origin_station");
+        dest_station = trainRs.getInt("dest_station");
+        total_fare = trainRs.getDouble("fare");
 
         // If the trip type is round_trip, double the fare
         if (trip_type.equalsIgnoreCase("round_trip")) {
             total_fare = 2 * total_fare;
         }
-        
-        //Discount price for children and the elderly
-        
+
+        // Discount price for children and the elderly
         try {
-        Integer number = Integer.valueOf(age); // Convert string to Integer
+            Integer number = Integer.valueOf(age); // Convert string to Integer
         } catch (NumberFormatException e) {
-        	out.println("Invalid number format");
-        	}
-        if(Integer.valueOf(age) < 12){
-        	total_fare = total_fare - 0.25 * total_fare;
-        }else if(Integer.valueOf(age) > 64){
-        	total_fare = total_fare - 0.35 * total_fare;
+            out.println("Invalid number format");
+            return;
         }
-        
-        if(status.equalsIgnoreCase("yes")){
-        	total_fare = total_fare * 0.5;
-        }else if(status.equalsIgnoreCase("no")){
-        }else{
-        	out.println("Invalid status");
-        	return;
+        if (Integer.valueOf(age) < 12) {
+            total_fare = total_fare - 0.25 * total_fare;
+        } else if (Integer.valueOf(age) > 64) {
+            total_fare = total_fare - 0.35 * total_fare;
         }
-        
+
+        if (status.equalsIgnoreCase("yes")) {
+            total_fare = total_fare * 0.5;
+        } else if (status.equalsIgnoreCase("no")) {
+            // No discount for disability status
+        } else {
+            out.println("Invalid status");
+            return;
+        }
 
         // Insert the reservation into the database
         try (PreparedStatement statement = con.prepareStatement(sql)) {

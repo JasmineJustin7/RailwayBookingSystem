@@ -17,7 +17,6 @@
     
     <button type="submit">Search</button>
 </form>
-	<a href="customerAuthentication.jsp">Go back to Customer home page</a>
 	<br>
 	<a href="logout.jsp">Logout</a>
 </body>

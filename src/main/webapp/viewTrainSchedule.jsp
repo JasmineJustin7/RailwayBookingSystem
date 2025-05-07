@@ -36,7 +36,6 @@
             if (rs.next()) {
 %>
         <h2>Train Schedule for <%= stationName %> Station</h2>
-        	<a href="employeeAuthentication.jsp">Go back to the Employee home page</a>
         
         <table border="1">
             <tr>
@@ -113,7 +112,6 @@
 %>
         </select>
         <input type="submit" value="View Schedule">
-            <a href="viewTrainSchedule">Go back to Train Schedule</a>
         
     </form>
 <%

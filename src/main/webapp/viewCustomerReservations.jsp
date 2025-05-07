@@ -16,7 +16,6 @@
         </select>
         <br>
 
-        <a href="employeeAuthentication.jsp">Go back to the Employee home page</a>
         <br>
 
         <label for="station_name">Station Name:</label>

@@ -33,7 +33,7 @@
             }
 
             // Provide a link to return to the reservation page
-            out.println("<br><a href='customerReservations.jsp'>Back to Your Reservations</a>");
+            out.println("<br><a href='generalLoginPage.jsp'>Logout</a>");
 
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
